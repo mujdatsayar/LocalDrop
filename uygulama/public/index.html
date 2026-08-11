@@ -10,9 +10,15 @@
 <body class="mobile-page">
     <main id="loginScreen" class="auth screen active">
         <section class="auth-card" aria-labelledby="loginTitle">
-            <div class="auth-card__brand">
-                <span class="brand__mark" aria-hidden="true">L</span>
-                <span>LocalDrop</span>
+            <div class="auth-card__top">
+                <div class="auth-card__brand">
+                    <span class="brand__mark" aria-hidden="true">L</span>
+                    <span>LocalDrop</span>
+                </div>
+                <div class="language-switch" role="group" aria-label="Dil / Language">
+                    <button class="language-option" type="button" data-language="tr" aria-pressed="true">TR</button>
+                    <button class="language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+                </div>
             </div>
             <span class="badge badge--success"><span class="badge__dot"></span>Yalnızca yerel ağ</span>
             <h1 id="loginTitle">Bilgisayarına bağlan</h1>
@@ -40,7 +46,13 @@
                 <span class="brand__mark" aria-hidden="true">L</span>
                 <span>LocalDrop</span>
             </a>
-            <button id="logoutBtn" class="btn btn--ghost btn--sm" type="button">Bağlantıyı kes</button>
+            <div class="mobile-topbar__actions">
+                <div class="language-switch" role="group" aria-label="Dil / Language">
+                    <button class="language-option" type="button" data-language="tr" aria-pressed="true">TR</button>
+                    <button class="language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+                </div>
+                <button id="logoutBtn" class="btn btn--ghost btn--sm" type="button">Bağlantıyı kes</button>
+            </div>
         </header>
 
         <section class="mobile-content">
@@ -165,6 +177,8 @@
         <span id="toastMessage"></span>
     </div>
 
+    <script src="i18n-core.js"></script>
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

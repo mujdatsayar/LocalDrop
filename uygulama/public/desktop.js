@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.pinCountdown.textContent = sessionActive ? formatCountdown(state.info?.pinExpiresAt, state.now) : '--:--';
 
         dom.lastChecked.textContent = state.lastChecked
-            ? `Son kontrol ${new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(state.lastChecked)}`
+            ? `Son kontrol ${new Intl.DateTimeFormat(currentLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(state.lastChecked)}`
             : 'Bağlantı hazırlanıyor';
 
         const uploading = state.upload.status === 'uploading';
@@ -763,6 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(state.countdownTimer);
         state.eventSource?.close();
     });
+    window.addEventListener('localdrop:languagechange', render);
     render();
     initialize();
 });
@@ -776,8 +777,12 @@ function trapFocus(event, overlay) {
     if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }
 
+function currentLocale() {
+    return window.LocalDropI18n?.locale || 'tr-TR';
+}
+
 function formatCount(value) {
-    return new Intl.NumberFormat('tr-TR').format(value);
+    return new Intl.NumberFormat(currentLocale()).format(value);
 }
 
 function formatCountdown(expiresAt, now = Date.now()) {
@@ -794,7 +799,7 @@ function formatBytes(bytes) {
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
     const value = bytes / Math.pow(1024, index);
-    return `${new Intl.NumberFormat('tr-TR', { maximumFractionDigits: index === 0 ? 0 : 1 }).format(value)} ${units[index]}`;
+    return `${new Intl.NumberFormat(currentLocale(), { maximumFractionDigits: index === 0 ? 0 : 1 }).format(value)} ${units[index]}`;
 }
 
 function formatRelativeTime(dateValue) {
@@ -805,12 +810,12 @@ function formatRelativeTime(dateValue) {
     if (minutes < 60) return `${formatCount(minutes)} dk önce`;
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${formatCount(hours)} sa önce`;
-    return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(time));
+    return new Intl.DateTimeFormat(currentLocale(), { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(time));
 }
 
 function formatFullDate(dateValue) {
     const date = new Date(dateValue);
-    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long', timeStyle: 'short' }).format(date) : '';
+    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(currentLocale(), { dateStyle: 'long', timeStyle: 'short' }).format(date) : '';
 }
 
 function getFileType(filename) {

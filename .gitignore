@@ -19,6 +19,7 @@ Thumbs.db
 *.exe
 *.dmg
 *.zip
+*.app/
 
 # Local environment and signing material
 .env

@@ -740,6 +740,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ['dragleave', 'drop'].forEach((eventName) => dom.dropZone.addEventListener(eventName, () => { state.dragActive = false; render(); }));
     dom.dropZone.addEventListener('drop', (event) => uploadFiles(event.dataTransfer.files));
 
+    window.addEventListener('localdrop:languagechange', render);
+
     const urlPin = new URLSearchParams(window.location.search).get('pin');
     if (urlPin) {
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -753,8 +755,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function currentLocale() {
+    return window.LocalDropI18n?.locale || 'tr-TR';
+}
+
 function formatCount(value) {
-    return new Intl.NumberFormat('tr-TR').format(value);
+    return new Intl.NumberFormat(currentLocale()).format(value);
 }
 
 function formatBytes(bytes) {
@@ -762,7 +768,7 @@ function formatBytes(bytes) {
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
     const value = bytes / Math.pow(1024, index);
-    return `${new Intl.NumberFormat('tr-TR', { maximumFractionDigits: index === 0 ? 0 : 1 }).format(value)} ${units[index]}`;
+    return `${new Intl.NumberFormat(currentLocale(), { maximumFractionDigits: index === 0 ? 0 : 1 }).format(value)} ${units[index]}`;
 }
 
 function formatRelativeTime(dateValue) {
@@ -773,12 +779,12 @@ function formatRelativeTime(dateValue) {
     if (minutes < 60) return `${formatCount(minutes)} dk önce`;
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${formatCount(hours)} sa önce`;
-    return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(time));
+    return new Intl.DateTimeFormat(currentLocale(), { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(time));
 }
 
 function formatFullDate(dateValue) {
     const date = new Date(dateValue);
-    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long', timeStyle: 'short' }).format(date) : '';
+    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(currentLocale(), { dateStyle: 'long', timeStyle: 'short' }).format(date) : '';
 }
 
 function getFileType(filename) {

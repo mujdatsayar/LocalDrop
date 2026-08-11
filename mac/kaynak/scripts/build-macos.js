@@ -1,18 +1,20 @@
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { Arch, Platform, build } = require('electron-builder');
 
 const projectRoot = path.resolve(__dirname, '..');
 const macRoot = path.resolve(projectRoot, '..');
-const buildRoot = path.join(projectRoot, 'build', 'macos-release');
+// Build outside cloud-synced folders. Sync clients may attach Finder metadata
+// while electron-builder is signing, which makes macOS reject the bundle.
+const buildRoot = path.join(os.tmpdir(), 'localdrop-macos-release');
 const outputRoot = path.join(buildRoot, 'output');
 const releaseDirectory = path.join(macRoot, 'kurulum');
 
 function assertBuildPath(target) {
     const resolved = path.resolve(target);
-    const allowedRoot = path.join(projectRoot, 'build');
-    if (resolved !== allowedRoot && !resolved.startsWith(`${allowedRoot}${path.sep}`)) {
+    if (resolved !== buildRoot && !resolved.startsWith(`${buildRoot}${path.sep}`)) {
         throw new Error(`Güvenli olmayan derleme yolu reddedildi: ${resolved}`);
     }
     return resolved;
@@ -91,6 +93,11 @@ async function main() {
             productName: 'LocalDrop',
             asar: true,
             asarUnpack: ['node_modules/ffmpeg-static/**/*'],
+            afterPack: async (context) => {
+                // Cloud-synced workspaces can attach Finder metadata/resource forks.
+                // macOS rejects those attributes during code-signature verification.
+                execFileSync('xattr', ['-cr', context.appOutDir], { stdio: 'inherit' });
+            },
             directories: {
                 output: outputRoot,
                 buildResources: path.join(projectRoot, 'assets')
@@ -149,6 +156,7 @@ async function main() {
     });
     fs.copyFileSync(dmgArtifact, releaseDmg);
     fs.copyFileSync(zipArtifact, releaseZip);
+    execFileSync('xattr', ['-cr', releaseApp], { stdio: 'inherit' });
     execFileSync('codesign', ['--force', '--deep', '--sign', '-', releaseApp], { stdio: 'inherit' });
     fs.rmSync(assertBuildPath(buildRoot), { recursive: true, force: true });
 
