@@ -9,10 +9,10 @@
   [![License](https://img.shields.io/badge/license-ISC-6d28d9)](LICENSE)
 </div>
 
-![LocalDrop desktop dashboard](docs/screenshots/desktop-dashboard.png)
+![LocalDrop desktop dashboard with local addresses redacted](docs/screenshots/desktop-dashboard-redacted-v2.png)
 
 <p align="center">
-  <img src="docs/screenshots/mobile-interface.png" width="390" alt="LocalDrop mobile transfer interface">
+  <img src="docs/screenshots/mobile-interface-redacted-v2.png" width="390" alt="LocalDrop mobile transfer interface with local addresses redacted">
 </p>
 
 ## What is LocalDrop?
