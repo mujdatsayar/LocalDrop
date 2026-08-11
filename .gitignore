@@ -1,0 +1,36 @@
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+
+# Dependencies and generated builds
+**/node_modules/
+**/build/
+**/out/
+**/dist/
+*.log
+
+# Runtime transfer data
+**/files/uploads/*
+**/files/download/*
+!**/files/uploads/.gitkeep
+!**/files/download/.gitkeep
+
+# Release artifacts are published through GitHub Releases
+*.exe
+*.dmg
+*.zip
+
+# Local environment and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Editor state
+.idea/
+.vscode/
+*.swp
+*~

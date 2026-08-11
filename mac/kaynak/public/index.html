@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#F7F8FA">
+    <title>LocalDrop — Yerel Dosya Transferi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="mobile-page">
+    <main id="loginScreen" class="auth screen active">
+        <section class="auth-card" aria-labelledby="loginTitle">
+            <div class="auth-card__brand">
+                <span class="brand__mark" aria-hidden="true">L</span>
+                <span>LocalDrop</span>
+            </div>
+            <span class="badge badge--success"><span class="badge__dot"></span>Yalnızca yerel ağ</span>
+            <h1 id="loginTitle">Bilgisayarına bağlan</h1>
+            <p class="auth-card__text">Bilgisayar ekranındaki 6 haneli kodu gir. Altıncı rakamda bağlantı otomatik kontrol edilir.</p>
+            <form id="loginForm" class="auth-form" novalidate>
+                <label class="field__label" for="pinInput">Bağlantı kodu</label>
+                <input class="input input--pin" type="tel" id="pinInput" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="000 000" autocomplete="one-time-code" aria-describedby="loginHint loginError">
+                <span id="loginHint" class="field__hint">6 rakam doğruysa doğrudan bağlanırsın. QR kodunda giriş zaten otomatiktir.</span>
+                <p id="loginError" class="field__error" role="alert"></p>
+                <button id="loginBtn" class="btn btn--primary btn--block" type="submit">
+                    <span id="loginBtnText">Bağlan</span>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+                </button>
+            </form>
+            <div class="privacy-row">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <span>Aktarım yalnızca aynı Wi-Fi ağı içinde gerçekleşir.</span>
+            </div>
+        </section>
+    </main>
+
+    <main id="dashboardScreen" class="mobile-app screen" aria-label="Dosya transferi">
+        <header class="mobile-topbar">
+            <a class="brand" href="#" aria-label="LocalDrop ana ekran">
+                <span class="brand__mark" aria-hidden="true">L</span>
+                <span>LocalDrop</span>
+            </a>
+            <button id="logoutBtn" class="btn btn--ghost btn--sm" type="button">Bağlantıyı kes</button>
+        </header>
+
+        <section class="mobile-content">
+            <div class="mobile-device">
+                <div>
+                    <span class="badge badge--success"><span class="badge__dot"></span>Bağlı</span>
+                    <h1 id="connectedDevice">Bilgisayar</h1>
+                    <p>Dosyalar doğrudan cihazlar arasında aktarılır.</p>
+                </div>
+                <span class="icon-box icon-box--accent" aria-hidden="true">
+                    <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8"></path><path d="M12 16v4"></path></svg>
+                </span>
+            </div>
+
+            <nav class="tabs" role="tablist" aria-label="Transfer yönü">
+                <button class="tabs__item is-active" type="button" role="tab" id="sendTab" data-tab="sendPanel" aria-controls="sendPanel" aria-selected="true">
+                    Bilgisayara gönder
+                </button>
+                <button class="tabs__item" type="button" role="tab" id="receiveTab" data-tab="receivePanel" aria-controls="receivePanel" aria-selected="false">
+                    Bilgisayardan al
+                    <span id="mobileFileCount" class="tabs__count hidden">0</span>
+                </button>
+            </nav>
+
+            <section id="sendPanel" class="card mobile-panel" role="tabpanel" aria-labelledby="sendTab">
+                <header class="card__head">
+                    <div>
+                        <h2 class="card__title">Bilgisayara gönder</h2>
+                        <p class="card__caption"><span>Bu telefon</span> → <span id="sendTargetName">Bilgisayar</span></p>
+                    </div>
+                </header>
+                <div class="card__body">
+                    <label id="dropZone" class="dropzone dropzone--touch" for="fileInput">
+                        <input type="file" id="fileInput" multiple>
+                        <span class="dropzone__icon" aria-hidden="true">
+                            <svg class="icon icon--lg" viewBox="0 0 24 24"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path></svg>
+                        </span>
+                        <span class="dropzone__title">Dosya veya fotoğraf seç</span>
+                        <span class="dropzone__text">Birden fazla dosya gönderebilirsin</span>
+                    </label>
+
+                    <div id="uploadProgress" class="upload-progress hidden" aria-live="polite">
+                        <div class="upload-progress__head">
+                            <div>
+                                <strong id="progressTitle">Bilgisayara gönderiliyor</strong>
+                                <span id="progressDetail">Hazırlanıyor…</span>
+                            </div>
+                            <span id="progressText" class="upload-progress__value">0%</span>
+                        </div>
+                        <div class="progress"><div id="progressFill" class="progress__bar"></div></div>
+                        <button id="cancelUploadBtn" class="btn btn--ghost btn--sm" type="button">Aktarımı iptal et</button>
+                    </div>
+                    <div id="uploadSummary" class="inline-feedback inline-feedback--success hidden" aria-live="polite"></div>
+
+                    <section id="sentQueue" class="queue hidden" aria-labelledby="sentQueueTitle">
+                        <div class="queue__head">
+                            <div>
+                                <h3 id="sentQueueTitle">Bilgisayara gönderdiklerin</h3>
+                                <p>Bilgisayara ulaşan dosyalar burada görünür.</p>
+                            </div>
+                            <span id="sentFileCount" class="badge">0 dosya</span>
+                        </div>
+                        <div id="sentFileList" class="file-list file-list--mobile" aria-live="polite"></div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="receivePanel" class="card mobile-panel hidden" role="tabpanel" aria-labelledby="receiveTab">
+                <header class="card__head">
+                    <div>
+                        <h2 class="card__title">Bilgisayardan al</h2>
+                        <p class="card__caption">Medya Fotoğraflar’a, diğer dosyalar Dosyalar’a.</p>
+                    </div>
+                    <button id="refreshBtn" class="btn btn--icon btn--ghost" type="button" aria-label="Dosyaları yenile" title="Yenile">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-5V2"></path><path d="M4 17h5v5"></path><path d="M5.1 9a8 8 0 0 1 13.2-3L20 7"></path><path d="M18.9 15a8 8 0 0 1-13.2 3L4 17"></path></svg>
+                    </button>
+                </header>
+                <div class="card__body">
+                    <div class="receive-note receive-note--media">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 16 5-5 4 4 2-2 7 6"></path><path d="M16 9h.01"></path></svg>
+                        <span>Fotoğraf ve videolarda paylaş düğmesiyle <strong>Fotoğraflar’a aktar</strong>; diğer dosyaları normal indir.</span>
+                    </div>
+                    <div id="fileList" class="file-list file-list--mobile" aria-live="polite">
+                        <div class="file-skeleton"><span class="skel skel--file-icon"></span><span class="skel skel--text"></span><span class="skel skel--action"></span></div>
+                        <div class="file-skeleton"><span class="skel skel--file-icon"></span><span class="skel skel--text skel--wide"></span><span class="skel skel--action"></span></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div id="mediaViewer" class="overlay media-viewer" aria-hidden="true">
+        <section class="modal media-viewer__sheet" role="dialog" aria-modal="true" aria-labelledby="mediaViewerTitle">
+            <header class="media-viewer__head">
+                <div>
+                    <span id="mediaViewerKind" class="badge badge--info">Medya</span>
+                    <h2 id="mediaViewerTitle">Önizleme</h2>
+                </div>
+                <button id="closeMediaViewerBtn" class="btn btn--icon btn--ghost" type="button" aria-label="Önizlemeyi kapat">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12"></path><path d="m6 6 12 12"></path></svg>
+                </button>
+            </header>
+            <div id="mediaViewerStage" class="media-viewer__stage" aria-live="polite"></div>
+            <div id="mediaViewerStatus" class="media-viewer__status">
+                Video ilk açılışta iPhone uyumlu biçime hazırlanabilir.
+            </div>
+            <footer class="media-viewer__actions">
+                <button id="mediaShareBtn" class="btn btn--primary btn--block" type="button">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"></path></svg>
+                    <span id="mediaShareText">Paylaş / Fotoğraflar’a Kaydet</span>
+                </button>
+                <a id="mediaDownloadBtn" class="btn btn--secondary btn--block" href="#" download>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                    Dosyalara indir
+                </a>
+            </footer>
+        </section>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <svg id="toastIcon" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

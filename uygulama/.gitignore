@@ -1,0 +1,8 @@
+node_modules/
+build/
+out/
+files/uploads/*
+files/download/*
+!files/uploads/.gitkeep
+!files/download/.gitkeep
+*.log

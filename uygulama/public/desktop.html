@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#F7F8FA">
+    <title>LocalDrop — Bilgisayar Paneli</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="desktop-page">
+    <div id="desktopLoading" class="app-loading" aria-live="polite">
+        <div class="app-loading__bar skel"></div>
+        <div class="app-loading__content">
+            <div class="skel skel--title"></div>
+            <div class="skel skel--text skel--wide"></div>
+            <div class="app-loading__grid">
+                <div class="skel skel--panel"></div>
+                <div class="skel skel--panel"></div>
+            </div>
+        </div>
+    </div>
+
+    <main id="desktopApp" class="app-shell hidden">
+        <header class="topbar">
+            <div class="topbar__start">
+                <a class="brand" href="/desktop.html" aria-label="LocalDrop ana sayfa">
+                    <span class="brand__mark" aria-hidden="true">L</span>
+                    <span>LocalDrop</span>
+                </a>
+                <button id="openConnectBtn" class="btn btn--ghost btn--sm" type="button" title="Bağlantı panelini aç" aria-controls="connectSidebar" aria-expanded="false">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg>
+                    <span class="topbar-btn-label">Bağlantı paneli</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="desktop-workspace">
+        <section id="transferPage" class="page">
+            <div class="page__head">
+                <div>
+                    <h1>Dosya aktarımı</h1>
+                    <p><span id="computerName">Bu bilgisayar</span> ile aynı ağdaki telefon arasında doğrudan aktarım.</p>
+                </div>
+                <div class="sync-status" aria-live="polite">
+                    <span class="sync-status__dot"></span>
+                    <span id="lastChecked">Bağlantı hazırlanıyor</span>
+                </div>
+            </div>
+
+            <div class="transfer-grid">
+                <article class="card transfer-card">
+                    <header class="card__head">
+                        <div class="card-title-group">
+                            <span class="icon-box icon-box--accent" aria-hidden="true">
+                                <svg class="icon" viewBox="0 0 24 24"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M5 20h14"></path></svg>
+                            </span>
+                            <div>
+                                <h2 class="card__title">Telefona gönder</h2>
+                                <p class="card__caption">Bilgisayardan telefona</p>
+                            </div>
+                        </div>
+                        <span id="pcSharedCount" class="badge badge--neutral">0 dosya</span>
+                    </header>
+                    <div class="card__body">
+                        <label id="pcDropZone" class="dropzone" for="pcFileInput">
+                            <input type="file" id="pcFileInput" multiple>
+                            <span class="dropzone__icon" aria-hidden="true">
+                                <svg class="icon icon--lg" viewBox="0 0 24 24"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path></svg>
+                            </span>
+                            <span class="dropzone__title">Dosyaları buraya bırak</span>
+                            <span class="dropzone__text"><span class="dropzone__link">Bilgisayardan seç</span> veya sürükleyip bırak</span>
+                            <span class="dropzone__hint">Birden fazla dosya seçebilirsin</span>
+                        </label>
+
+                        <div id="pcProgress" class="upload-progress hidden" aria-live="polite">
+                            <div class="upload-progress__head">
+                                <div>
+                                    <strong id="pcProgressTitle">Telefona gönderiliyor</strong>
+                                    <span id="pcProgressDetail">Hazırlanıyor…</span>
+                                </div>
+                                <span id="pcProgressText" class="upload-progress__value">0%</span>
+                            </div>
+                            <div class="progress"><div id="pcProgressFill" class="progress__bar"></div></div>
+                            <button id="pcCancelUploadBtn" class="btn btn--ghost btn--sm" type="button">Aktarımı iptal et</button>
+                        </div>
+
+                        <div id="pcUploadSummary" class="inline-feedback inline-feedback--success hidden" aria-live="polite"></div>
+
+                        <section id="pcSharedQueue" class="shared-queue hidden" aria-labelledby="pcSharedQueueTitle">
+                            <header class="shared-queue__head">
+                                <div>
+                                    <h3 id="pcSharedQueueTitle">Telefona gönderilecekler</h3>
+                                    <p><code>uploads</code> klasörüyle anlık senkron</p>
+                                </div>
+                                <div class="list-head-actions">
+                                    <span id="pcSharedQueueCount" class="badge badge--neutral">0 dosya</span>
+                                    <button id="clearOutboxBtn" class="btn btn--ghost btn--sm" type="button" data-action="clear-files" data-scope="outbox">Tümünü temizle</button>
+                                </div>
+                            </header>
+                            <div id="pcSharedList" class="file-list file-list--outgoing" aria-live="polite"></div>
+                        </section>
+
+                    </div>
+                </article>
+
+                <article class="card transfer-card">
+                    <header class="card__head">
+                        <div class="card-title-group">
+                            <span class="icon-box icon-box--info" aria-hidden="true">
+                                <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v12"></path><path d="m17 11-5 5-5-5"></path><path d="M5 20h14"></path></svg>
+                            </span>
+                            <div>
+                                <h2 class="card__title">Telefondan gelenler</h2>
+                                <p class="card__caption">Telefondan bilgisayara</p>
+                            </div>
+                        </div>
+                        <div class="list-head-actions">
+                            <button id="clearInboxBtn" class="btn btn--ghost btn--sm" type="button" data-action="clear-files" data-scope="inbox">Tümünü temizle</button>
+                            <button id="desktopRefreshBtn" class="btn btn--icon btn--ghost" type="button" aria-label="Dosya listelerini yenile" title="Yenile">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-5V2"></path><path d="M4 17h5v5"></path><path d="M5.1 9a8 8 0 0 1 13.2-3L20 7"></path><path d="M18.9 15a8 8 0 0 1-13.2 3L4 17"></path></svg>
+                            </button>
+                        </div>
+                    </header>
+                    <div class="card__body">
+                        <div class="receive-note">
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                            <span>Yeni dosyalar otomatik görünür. İndirme bağlantısı bu bilgisayarda kalır.</span>
+                        </div>
+                        <div id="desktopFileList" class="file-list file-list--incoming" aria-live="polite">
+                            <div class="file-skeleton"><span class="skel skel--file-icon"></span><span class="skel skel--text"></span><span class="skel skel--action"></span></div>
+                            <div class="file-skeleton"><span class="skel skel--file-icon"></span><span class="skel skel--text skel--wide"></span><span class="skel skel--action"></span></div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="disconnectedState" class="page disconnected-state hidden" aria-labelledby="disconnectedTitle">
+            <div class="disconnected-state__card">
+                <span class="icon-box icon-box--warning" aria-hidden="true">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h3"></path><path d="M15 7h2a5 5 0 0 1 0 10h-3"></path><path d="m3 3 18 18"></path></svg>
+                </span>
+                <h1 id="disconnectedTitle">Bağlantı kapalı</h1>
+                <p>Telefon oturumu kapatıldı. Dosyaların korunuyor; yeniden bağlandığında yeni QR kodu oluşturulacak.</p>
+                <button id="centerReconnectBtn" class="btn btn--primary" type="button">Yeniden bağlan</button>
+            </div>
+        </section>
+        </div>
+    </main>
+
+    <aside id="connectSidebar" class="connect-sidebar" aria-labelledby="connectTitle" aria-hidden="false">
+        <header class="connect-sidebar__head">
+            <div>
+                <h2 id="connectTitle">Telefonu bağla</h2>
+                <p>Aynı Wi-Fi ağındaki telefonla bağlan.</p>
+            </div>
+            <button id="closeConnectSidebarBtn" class="btn btn--icon btn--ghost" type="button" aria-label="Bağlantı panelini kapat" title="Paneli kapat">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+        </header>
+        <div id="sidebarConnectionContent" class="connect-sidebar__body">
+            <div class="connection__qr">
+                <img id="qrImage" alt="Telefonu bağlamak için QR kod">
+            </div>
+            <span class="badge badge--success connect-sidebar__ready"><span class="badge__dot"></span>Bağlantıya hazır</span>
+            <div class="connection__block">
+                <div class="connection__label-row">
+                    <span>Elle giriş kodu</span>
+                    <span id="pinCountdown" class="pin-countdown" role="timer" aria-label="Kodun yenilenmesine kalan süre">05:00</span>
+                </div>
+                <strong id="displayPin">— — — — — —</strong>
+            </div>
+            <button id="copyUrlBtn" class="copy-field" type="button">
+                <span id="displayUrl">http://…</span>
+                <span id="copyLabel">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Kopyala
+                </span>
+            </button>
+            <p class="connect-sidebar__hint">QR kodu okut veya adresi telefon tarayıcısında aç.</p>
+            <button id="rotatePinBtn" class="btn btn--secondary btn--block" type="button">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-5V2"></path><path d="M5.1 9a8 8 0 0 1 13.2-3L20 7"></path><path d="M4 17h5v5"></path><path d="M18.9 15a8 8 0 0 1-13.2 3L4 17"></path></svg>
+                Kodu yenile
+            </button>
+        </div>
+        <div id="sidebarDisconnectedState" class="connect-sidebar__empty hidden">
+            <span class="icon-box icon-box--warning" aria-hidden="true">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h3"></path><path d="M15 7h2a5 5 0 0 1 0 10h-3"></path><path d="m3 3 18 18"></path></svg>
+            </span>
+            <strong>Bağlantı kapalı</strong>
+            <p>Yeni QR kodu için yeniden bağlan.</p>
+            <button id="sidebarReconnectBtn" class="btn btn--primary btn--block" type="button">Yeniden bağlan</button>
+        </div>
+        <footer class="connect-sidebar__footer">
+            <span id="connectionBadge" class="badge badge--success"><span class="badge__dot"></span><span id="connectionBadgeText">Bağlantı açık</span></span>
+            <button id="connectionToggleBtn" class="btn btn--ghost connect-sidebar__toggle" type="button" title="Bağlantıyı kes">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h3"></path><path d="M15 7h2a5 5 0 0 1 0 10h-3"></path><path d="m8 12 8 0"></path></svg>
+                <span id="connectionToggleText">Bağlantıyı kes</span>
+            </button>
+        </footer>
+    </aside>
+    <button id="sidebarScrim" class="sidebar-scrim" type="button" aria-label="Bağlantı panelini kapat" tabindex="-1"></button>
+
+    <div id="removeOverlay" class="overlay" aria-hidden="true">
+        <section class="modal modal--confirm" role="dialog" aria-modal="true" aria-labelledby="removeTitle" tabindex="-1">
+            <header class="modal__head">
+                <span class="icon-box icon-box--danger" aria-hidden="true">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
+                </span>
+                <h2 id="removeTitle" class="modal__title">Dosyayı telefondan kaldır?</h2>
+                <p id="removeDescription" class="modal__desc">1 dosya kalıcı olarak kaldırılacak.</p>
+            </header>
+            <footer class="modal__foot">
+                <button class="btn btn--secondary" type="button" data-action="close-overlay">Vazgeç</button>
+                <button id="confirmRemoveBtn" class="btn btn--danger" type="button">1 dosyayı kaldır</button>
+            </footer>
+        </section>
+    </div>
+
+    <div id="disconnectOverlay" class="overlay" aria-hidden="true">
+        <section class="modal modal--confirm" role="dialog" aria-modal="true" aria-labelledby="disconnectTitle" tabindex="-1">
+            <header class="modal__head">
+                <span class="icon-box icon-box--danger" aria-hidden="true">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h3"></path><path d="M15 7h2a5 5 0 0 1 0 10h-3"></path><path d="m8 12 8 0"></path><path d="m3 3 18 18"></path></svg>
+                </span>
+                <h2 id="disconnectTitle" class="modal__title">Sunucu bağlantısını kes?</h2>
+                <p class="modal__desc">Bağlı telefonların oturumu kapanacak. Dosyalar silinmeyecek; yeniden bağlanınca yeni bir QR kodu oluşturulacak.</p>
+            </header>
+            <footer class="modal__foot">
+                <button class="btn btn--secondary" type="button" data-action="close-overlay">Vazgeç</button>
+                <button id="confirmDisconnectBtn" class="btn btn--danger" type="button">Bağlantıyı kes</button>
+            </footer>
+        </section>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <svg id="toastIcon" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="desktop.js"></script>
+</body>
+</html>
