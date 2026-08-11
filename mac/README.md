@@ -10,6 +10,8 @@ This directory is a self-contained macOS preparation bundle. It can be copied to
 
 The first setup requires an internet connection to obtain Node.js and application dependencies. After installation, LocalDrop transfers files within the local network and does not upload them to the internet.
 
+The desktop, pairing, and mobile interfaces include a persistent **TR / EN** language switch. Select either language once and LocalDrop remembers the choice on that device.
+
 If the folder was copied without the ZIP and macOS reports missing execute permission, open Terminal in this directory and run:
 
 ```bash

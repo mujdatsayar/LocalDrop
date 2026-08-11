@@ -9,11 +9,20 @@
   [![License](https://img.shields.io/badge/license-ISC-6d28d9)](LICENSE)
 </div>
 
-![LocalDrop desktop dashboard with local addresses redacted](docs/screenshots/desktop-dashboard-redacted-v2.png)
-
-<p align="center">
-  <img src="docs/screenshots/mobile-interface-redacted-v2.png" width="390" alt="LocalDrop mobile transfer interface with local addresses redacted">
-</p>
+<table>
+  <tr>
+    <th>English</th>
+    <th>Türkçe</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/desktop-dashboard-en-v3.png" alt="LocalDrop desktop dashboard in English with private addresses redacted"></td>
+    <td><img src="docs/screenshots/desktop-dashboard-tr-v3.png" alt="LocalDrop desktop dashboard in Turkish with private addresses redacted"></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/mobile-interface-en-v3.png" width="280" alt="LocalDrop mobile transfer interface in English with private addresses redacted"></td>
+    <td align="center"><img src="docs/screenshots/mobile-interface-tr-v3.png" width="280" alt="LocalDrop mobile transfer interface in Turkish with private addresses redacted"></td>
+  </tr>
+</table>
 
 ## What is LocalDrop?
 
@@ -31,7 +40,14 @@ Files never need to leave the local network, and the interface does not rely on 
 - Media preview and sharing support for phone browsers
 - Original filenames preserved; sending the same name again updates the stored copy
 - Native desktop packaging for Windows and macOS
+- Instant Turkish/English switching across desktop, pairing, and mobile screens
 - Local-only assets and no cloud dependency during file transfer
+
+## Languages
+
+Use the single **TR / EN** control in the header to switch the complete interface instantly. The selected language is remembered on that device and remains active after a refresh or restart. The language control is available on the desktop dashboard, phone pairing screen, and connected mobile transfer screen.
+
+All screenshots published in this repository have private IP addresses, pairing URLs, and QR codes redacted.
 
 ## Download
 
@@ -154,7 +170,7 @@ npm ci
 npm test
 ```
 
-Tests use temporary storage and do not modify the real uploads or downloads directories.
+The automated suite currently contains 18 tests, including localization coverage. Tests use temporary storage and do not modify the real uploads or downloads directories.
 
 ## License
 
